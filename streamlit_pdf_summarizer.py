@@ -1,7 +1,8 @@
 import streamlit as st
 import pypdf
-from google import genai
-from google.genai import errors
+import google.generativeai as genai
+
+
 
 # Page configuration for better UX
 st.set_page_config(page_title="PDF Summarizer with Gemini", page_icon="📄", layout="wide")
@@ -136,6 +137,9 @@ with col2:
 
 # Processing and Output
 if generate_btn and uploaded_file and api_key:
+    # Set the Gemini API key
+    genai.configure(api_key=api_key)
+
     extracted_text = ""
     with st.spinner("Extracting text from PDF..."):
         try:
@@ -156,8 +160,7 @@ if generate_btn and uploaded_file and api_key:
             
     with st.spinner("Generating summary using Gemini AI..."):
         try:
-            # 2. Initialize Gemini Client
-            client = genai.Client(api_key=api_key)
+            # 2. Initialize Gemini Client - This line is no longer strictly needed if using genai.configure()
             
             # 3. Construct prompt based on user choice
             if summary_type == "Bullet Points":
@@ -177,8 +180,9 @@ if generate_btn and uploaded_file and api_key:
             """
             
             # 4. Generate content using Gemini 2.5 Flash
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
+            # Directly call genai.GenerativeModel after configuring API key
+            model = genai.GenerativeModel(model_name="gemini-2.5-flash")
+            response = model.generate_content(
                 contents=prompt + "\n\nInclude: funny and hilarious emoji reaction"
             )
             
