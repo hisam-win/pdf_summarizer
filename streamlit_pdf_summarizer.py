@@ -1,9 +1,6 @@
 import streamlit as st
 import pypdf
 import google.generativeai as genai
-
-
-
 # Page configuration for better UX
 st.set_page_config(page_title="PDF Summarizer with Gemini", page_icon="📄", layout="wide")
 
@@ -191,7 +188,7 @@ if generate_btn and uploaded_file and api_key:
             with st.container(border=True):
                 st.markdown(response.text)
             
-        except errors.APIError as e:
+        except genai.APIError as e:
             st.error(f"API Error occurred: {e}")
         except Exception as e:
             st.error(f"An unexpected error occurred: {e}")
